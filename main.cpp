@@ -7,18 +7,9 @@
 //
 
 #include <iostream>
-#include <math.h>
-double polynom(double x) {
-    return 4*x*x*x-9*x*x;
-}
+#include "DefinedFunctions.cpp"
+#include "SteepestDescent.cpp"
 
-double sine(double x) {
-    return sin(x);
-}
-
-double step(double (*func)(double), double x, double h) {
-    return x-h*(*func)(x);
-}
 int main()
 {
 
@@ -30,7 +21,7 @@ int main()
     while ( fabs(x_new-x_old) > precision) {
         x_old = x_new;
 //        x_new = x_old - eps * polynom(x_old);
-        x_new = step(polynom,x_old, eps);
+        x_new = SteepestDescent::step(DefinedFunctions::polynom,x_old, eps);
         std::cout << x_old << "\t" << x_new << "\t" << abs(x_old - x_new) << std::endl;
     }
     std::cout << "the minimum is at: " <<  x_new << std::endl;
