@@ -10,6 +10,7 @@
 #include "DefinedFunctions.cpp"
 #include "SteepestDescent.cpp"
 
+
 int main()
 {
 
@@ -22,7 +23,7 @@ int main()
         x_old = x_new;
 //        x_new = x_old - eps * polynom(x_old);
         x_new = SteepestDescent::step(DefinedFunctions::polynom,x_old, eps);
-        std::cout << x_old << "\t" << x_new << "\t" << abs(x_old - x_new) << std::endl;
+        std::cout << x_old << "\t" << x_new << "\t" << fabs(x_old - x_new) << std::endl;
     }
     std::cout << "the minimum is at: " <<  x_new << std::endl;
     return 0;

@@ -6,7 +6,6 @@
 //  Copyright (c) 2013 Philipp Gloor. All rights reserved.
 //
 
-#include "DefinedFunctions.h"
 #include <math.h>
 class DefinedFunctions {
 public:
