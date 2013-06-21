@@ -9,6 +9,7 @@
 #include <iostream>
 #include "DefinedFunctions.cpp"
 #include "SteepestDescent.cpp"
+#include "PNVector.hpp"
 
 
 int main()

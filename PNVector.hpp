@@ -13,7 +13,7 @@
 #ifndef RK4_project_PNVector_hpp
 #define RK4_project_PNVector_hpp
 #include <vector>
-#include "PNVector.cpp"
+#include <iostream>
 
 class PNVector {
 public:

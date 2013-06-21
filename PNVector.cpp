@@ -16,7 +16,6 @@
 //  Copyright 2011 UZH. All rights reserved.
 //
 
-#include <iostream>
 #include "PNVector.hpp"
 
 PNVector PNVector::operator+(const PNVector &rhs) {
