@@ -12,7 +12,6 @@
 #include <boost/numeric/ublas/io.hpp>
 #include "DefinedFunctions.cpp"
 
-#include "PNVector.hpp"
 
 //using namespace boost::numeric::ublas;
 double step(double (*func)(double), double x, double h);
@@ -39,4 +38,10 @@ double step(double (*func)(double), double x, double h) {
         return x-h*(*func)(x);
 }
 
+void congrad(boost::numeric::ublas::vector<double> x, boost::numeric::ublas::matrix<double> A, boost::numeric::ublas::vector<double> b) {
+  using namespace boost::numeric::ublas;
+  unsigned int i_max = 10000;
+  unsigned int i = 0;
+  vector<double> r ((int)(x.size()));
 
+}
