@@ -15,9 +15,13 @@
 
 
 using namespace boost::numeric::ublas;
+
 double step(double (*func)(double), double x, double h);
 void congrad(boost::numeric::ublas::vector<double>& x, boost::numeric::ublas::matrix<double> A, boost::numeric::ublas::vector<double> b);
-int main()
+void steepdesc(boost::numeric::ublas::vector<double>& x, boost::numeric::ublas::matrix<double> A, boost::numeric::ublas::vector<double> b);
+
+
+int main(int argc, char * argv[])
 {
 
     // insert code here...
@@ -65,6 +69,29 @@ int main()
 
 double step(double (*func)(double), double x, double h) {
         return x-h*(*func)(x);
+}
+
+void steepdesc(boost::numeric::ublas::vector<double>& x, boost::numeric::ublas::matrix<double> A, boost::numeric::ublas::vector<double> b) {
+  using namespace boost::numeric::ublas;
+  double epsilon = 0.001;
+  unsigned int i_max = 10000;
+  unsigned int i = 0;
+  vector<double> r ((int)(x.size()));
+  r = b - prod(A,x);
+  double delta = inner_prod(r,r);
+  double delta_0 = delta;
+  while (i < i_max && delta > pow(epsilon,2)) {
+    vector<double> q = prod(A,r);
+    double alpha = delta/inner_prod(r,q);
+    x = x + alpha*r;
+    if (i%50==0)
+      r = b - prod(A,x);
+    else
+      r = r - alpha*q;
+
+    delta = inner_prod(r,r);
+    i += 1;
+  }
 }
 
 void congrad(boost::numeric::ublas::vector<double>& x, boost::numeric::ublas::matrix<double> A, boost::numeric::ublas::vector<double> b) {
