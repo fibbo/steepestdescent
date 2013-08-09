@@ -11,6 +11,7 @@
 #include <boost/numeric/ublas/vector.hpp>
 #include <boost/numeric/ublas/io.hpp>
 #include <math.h>
+#include <fstream>
 #include "DefinedFunctions.cpp"
 
 
@@ -36,24 +37,17 @@ int main(int argc, char * argv[])
         std::cout << x_old << "\t" << x_new << "\t" << fabs(x_old - x_new) << std::endl;
     }
     std::cout << "the minimum is at: " <<  x_new << std::endl;
-
+    unsigned int N = 0;
+    std::cout << "Enter the dimensionality of the matrix" << std::endl;
+    std::cin >> N;
     vector<double> x(2), y(2), w(2);
-    matrix<double> A(2,2);
-    for (unsigned int i = 0; i<A.size1(); ++i) {
-      for (unsigned int j = 0; j<A.size2(); ++j) {
-	A(i,j) = 3*i+j;
-      }
-    }
-    std::cout << A << std::endl;
+    matrix<double> A(N,N);
+
     double z;
     x(0) = 2.;
     x(1) = 1.;
     y(0) = 1;
     y(1) = 2;
-    z = inner_prod(x,y);
-    w = prod(A,x);
-    std::cout << z << std::endl;
-    std::cout << w << std::endl;
 
     A(0,0) = 4.;
     A(0,1) = 1.;
