@@ -12,14 +12,19 @@
 #include <boost/numeric/ublas/io.hpp>
 #include <math.h>
 #include <fstream>
-#include "DefinedFunctions.cpp"
 
 
 using namespace boost::numeric::ublas;
 
 double step(double (*func)(double), double x, double h);
 void congrad(boost::numeric::ublas::vector<double>& x, boost::numeric::ublas::matrix<double> A, boost::numeric::ublas::vector<double> b);
+void congrad_2(boost::numeric::ublas::vector<double>& x, boost::numeric::ublas::matrix<double> A, boost::numeric::ublas::vector<double> b);
 void steepdesc(boost::numeric::ublas::vector<double>& x, boost::numeric::ublas::matrix<double> A, boost::numeric::ublas::vector<double> b);
+void fillmatrix(matrix<double>& A, vector<double>x);
+double A00(vector<double> x);
+double A01(vector<double> x);
+double A10(vector<double> x);
+double A11(vector<double> x);
 
 
 int main(int argc, char * argv[])
@@ -38,6 +43,7 @@ int main(int argc, char * argv[])
   //    }
   //   std::cout << "the minimum is at: " <<  x_new << std::endl;
   // 
+  // backup
     unsigned int N = 0;
     std::cout << "Enter the dimensionality of the matrix" << std::endl;
     std::cin >> N;
@@ -61,8 +67,8 @@ int main(int argc, char * argv[])
     double z;
     x(0) = 2.;
     x(1) = 1.;
-
-    congrad(x, A, b);
+    fillmatrix(A,x);
+    congrad_2(x, A, b);
 
     std::cout << x << std::endl;
     return 0;
@@ -125,4 +131,63 @@ void congrad(boost::numeric::ublas::vector<double>& x, boost::numeric::ublas::ma
   }
   std::cout << "number of steps: " << i << std::endl;
 
+}
+
+void congrad_2(boost::numeric::ublas::vector<double>& x, boost::numeric::ublas::matrix<double> A, boost::numeric::ublas::vector<double> b) {
+  using namespace boost::numeric::ublas;
+  double epsilon = 0.001;
+  unsigned int i_max = 10000000;
+  unsigned int i = 0;
+  vector<double> r ((int)(x.size()));
+
+  fillmatrix(A,x);
+
+  r = b - prod(A,x);
+  vector<double> d = r;
+  double delta_new = inner_prod(r,r);
+  double delta_0 = delta_new;
+
+  while (i < i_max && delta_new > pow(epsilon,2)) {
+    fillmatrix(A,x);
+    vector<double> q = prod(A,d);
+    double alpha = delta_new/inner_prod(d,q);
+    x = x + alpha*d;
+
+    if (i%50 == 0)
+      r = b - prod(A,x);
+    else
+      r = r - alpha*q;
+
+    double delta_old = delta_new;
+    delta_new = inner_prod(r,r);
+    double beta = delta_new/delta_old;
+    d = r + beta*d;
+    i += 1;
+
+  }
+  std::cout << "number of steps: " << i << std::endl;
+
+}
+
+void fillmatrix(matrix<double>& A, vector<double>x) {
+  A(0,0) = A00(x);
+  A(0,1) = A01(x);
+  A(1,0) = A10(x);
+  A(1,1) = A11(x);
+}
+
+double A00(vector<double> x) {
+  return 800*pow(x[0],2) - 400*pow((x[1]-pow(x[0],2)),2) - 2;
+}
+
+double A01(vector<double> x) {
+  return -400*x[0];
+}
+
+double A10(vector<double> x) {
+  return -400*x[0];
+}
+
+double A11(vector<double> x) {
+  return 200;
 }
