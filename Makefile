@@ -3,3 +3,6 @@ all:
 
 read:
 	g++ -I /opt/local/include readfile.cpp -o readfile
+
+ubuntu:
+	c++ -I /usr/local/src main.cpp -o SD	
