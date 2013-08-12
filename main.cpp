@@ -25,37 +25,44 @@ void steepdesc(boost::numeric::ublas::vector<double>& x, boost::numeric::ublas::
 int main(int argc, char * argv[])
 {
 
-    // insert code here...
-    double x_old = 0;
-    double x_new = 6;
-    double precision = 0.0001;
-    double eps = 0.01;
-    while ( fabs(x_new-x_old) > precision) {
-        x_old = x_new;
-//        x_new = x_old - eps * polynom(x_old);
-        x_new = step(DefinedFunctions::polynom,x_old, eps);
-        std::cout << x_old << "\t" << x_new << "\t" << fabs(x_old - x_new) << std::endl;
-    }
-    std::cout << "the minimum is at: " <<  x_new << std::endl;
+  //    // insert code here...
+  //    double x_old = 0;
+  //    double x_new = 6;
+  //    double precision = 0.0001;
+  //    double eps = 0.01;
+  //    while ( fabs(x_new-x_old) > precision) {
+  //        x_old = x_new;
+
+  //        x_new = step(DefinedFunctions::polynom,x_old, eps);
+  //        std::cout << x_old << "\t" << x_new << "\t" << fabs(x_old - x_new) << std::endl;
+  //    }
+  //   std::cout << "the minimum is at: " <<  x_new << std::endl;
+  // 
     unsigned int N = 0;
     std::cout << "Enter the dimensionality of the matrix" << std::endl;
     std::cin >> N;
-    vector<double> x(2), y(2), w(2);
     matrix<double> A(N,N);
+    vector<double> x(N);
+    vector<double> b(N);
+    std::ifstream matrixfile(argv[1]);
+    std::ifstream bfile(argv[2]);
+    for (int i = 0; i<N; i++) {
+      for (int j = 0; j<N; j++) {
+	matrixfile >> A(i,j);
+      }
+    }
+    matrixfile.close();
+
+    for (int i = 0; i<N; i++) {
+      bfile >> b(i);
+    }
+
 
     double z;
     x(0) = 2.;
     x(1) = 1.;
-    y(0) = 1;
-    y(1) = 2;
 
-    A(0,0) = 4.;
-    A(0,1) = 1.;
-    A(1,0) = 1.;
-    A(1,1) = 3.;
-    y(0) = 1.;
-    y(1) = 2.;
-    congrad(x, A, y);
+    congrad(x, A, b);
 
     std::cout << x << std::endl;
     return 0;
