@@ -12,7 +12,7 @@
 #include <boost/numeric/ublas/io.hpp>
 #include <math.h>
 #include <fstream>
-
+#include <cstdio>
 
 using namespace boost::numeric::ublas;
 
@@ -21,11 +21,12 @@ void congrad(boost::numeric::ublas::vector<double>& x, boost::numeric::ublas::ma
 void congrad_2(boost::numeric::ublas::vector<double>& x, boost::numeric::ublas::matrix<double> A, boost::numeric::ublas::vector<double> b);
 void steepdesc(boost::numeric::ublas::vector<double>& x, boost::numeric::ublas::matrix<double> A, boost::numeric::ublas::vector<double> b);
 void fillmatrix(matrix<double>& A, vector<double>x);
+void nonlin_congrad(vector<double> (*deriv)(vector<double>), vector<double>& x);
 double A00(vector<double> x);
 double A01(vector<double> x);
 double A10(vector<double> x);
 double A11(vector<double> x);
-
+vector<double> deriv_rosenbrock(vector<double> x);
 
 int main(int argc, char * argv[])
 {
@@ -44,32 +45,34 @@ int main(int argc, char * argv[])
   //   std::cout << "the minimum is at: " <<  x_new << std::endl;
   // 
   // backup
-    unsigned int N = 0;
-    std::cout << "Enter the dimensionality of the matrix" << std::endl;
-    std::cin >> N;
-    matrix<double> A(N,N);
-    vector<double> x(N);
-    vector<double> b(N);
-    std::ifstream matrixfile(argv[1]);
-    std::ifstream bfile(argv[2]);
-    for (int i = 0; i<N; i++) {
-      for (int j = 0; j<N; j++) {
-	matrixfile >> A(i,j);
-      }
-    }
-    matrixfile.close();
 
-    for (int i = 0; i<N; i++) {
-      bfile >> b(i);
-    }
+     unsigned int N = 0;
+     std::cout << "Enter the dimensionality of the matrix" << std::endl;
+     std::cin >> N;
+    // matrix<double> A(N,N);
+     vector<double> x(N);
+    // vector<double> b(N);
+    // std::ifstream matrixfile(argv[1]);
+    // std::ifstream bfile(argv[2]);
+    // for (int i = 0; i<N; i++) {
+    //   for (int j = 0; j<N; j++) {
+    // 	matrixfile >> A(i,j);
+    //   }
+    // }
+    // matrixfile.close();
+
+    // for (int i = 0; i<N; i++) {
+    //   bfile >> b(i);
+    // }
 
 
-    double z;
+    // double z;
     x(0) = 2.;
-    x(1) = 1.;
-    fillmatrix(A,x);
-    congrad_2(x, A, b);
+    x(1) = 2.;
+    //fillmatrix(A,x);
+    //congrad_2(x, A, b);
 
+    nonlin_congrad(deriv_rosenbrock, x);
     std::cout << x << std::endl;
     return 0;
 }
@@ -190,4 +193,50 @@ double A10(vector<double> x) {
 
 double A11(vector<double> x) {
   return 200;
+}
+
+void nonlin_congrad(vector<double> (*deriv)(vector<double>), vector<double>& x) {
+  unsigned int i = 0;
+  unsigned int i_max = 100000;
+  double epsilon = 0.000001;
+  unsigned int k = 0;
+  vector<double> r = -(*deriv)(x);
+  vector<double> d = r;
+  double delta_new = inner_prod(r,r);
+  double delta_0 = delta_new;
+  matrix<double> H(2,2);
+  while (i<i_max && delta_new > pow(epsilon,2)*delta_0) {
+    unsigned int j = 0;
+    unsigned int j_max = 10000;
+    double delta_d = inner_prod(d,d);
+    double alpha;
+    fillmatrix(H,x);
+    do {
+      alpha = -inner_prod((*deriv)(x),d) / inner_prod( d, prod( H , d) );
+      x = x + alpha*d;
+      j += 1;
+    } while (j < j_max && pow(alpha,2) * delta_d > pow(epsilon,2));
+
+    r = -(*deriv)(x);
+    double delta_old = delta_new;
+    delta_new = inner_prod(r,r);
+    double beta = delta_new/delta_old;
+    d = r + beta*d;
+    k += 1;
+    if (k = 10000 || inner_prod(r,d) <= 0) {
+      d = r;
+      k = 0;
+    }
+
+    i += 1;
+
+  }
+  std::cout << "Number of iterations i: "  << i << std::endl;
+}
+
+vector<double> deriv_rosenbrock(vector<double> x) {
+  vector<double> result(2);
+  result(0) = 2 * (200 * pow(x[0],3) - 200 * x[0] * x[1] + x[0] - 1);
+  result(1) = 200*(x[1] - pow(x[0],2));
+  return result;
 }
