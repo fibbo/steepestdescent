@@ -27,7 +27,7 @@ int main(int argc, char * argv[])
      //std::cout << "Enter the dimensionality of the matrix" << std::endl;
      //std::cin >> N;
      matrix<double> A(N,N);
-     vector<double> x1(N), x2(N);
+     vector<double> x1(N), x2(N), x3(N), x4(N);
      vector<double> b(N);
      std::ifstream matrixfile(argv[1]);
      std::ifstream bfile(argv[2]);
@@ -52,18 +52,24 @@ int main(int argc, char * argv[])
      std::cout << "Enter x2*: " << std::endl;
      std::cin >> x2(0) >> x2(1);
      
-<<<<<<< HEAD
+
      nonlin_steep(deriv_rosenbrock, x2);
      std::cout << x2 << std::endl;
-=======
-     step_nonlin(deriv_rosenbrock, x);
-     std::cout << x << std::endl;
 
-     std::cout << "Enter x*: " << std::endl;
-     std::cin >> x(0) >> x(1);
->>>>>>> 63bf66a041f455a98e53f222871bc28fbec66f68
+
+     std::cout << "Enter x3*: " << std::endl;
+     std::cin >> x3(0) >> x3(1);
      
-     nonlin_congrad(deriv_rosenbrock, x);
-     std::cout << x << std::endl;
+
+     steep(x3, b, A);
+     std::cout << x3 << std::endl;
+
+     std::cout << "Enter x4*: " << std::endl;
+     std::cin >> x4(0) >> x4(1);
+     
+
+     congrad(x4, b, A);
+     std::cout << x4 << std::endl;
+
      return 0;
 }

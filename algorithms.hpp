@@ -8,10 +8,7 @@
 using namespace boost::numeric::ublas;
 
 void fillmatrix(matrix<double>&, vector<double>);
-<<<<<<< HEAD
 
-=======
->>>>>>> 63bf66a041f455a98e53f222871bc28fbec66f68
 void steep(vector<double>& x, vector<double> b, matrix<double> A) {
   double epsilon = 0.000001;
   unsigned int i = 0;
@@ -39,13 +36,14 @@ void nonlin_steep(vector<double> (*deriv)(vector<double>), vector<double>& x) {
 
   unsigned int i = 0;
   unsigned int i_max = 10000;
-  double epsilon = 0.00001;
+  double epsilon = 0.000001;
   unsigned int k = 0;
   vector<double> r = -(*deriv)(x); //residual
   vector<double> d = r; // direction of the search
   double delta = inner_prod(r,r);
   double delta_0 = delta;
   matrix<double> H(2,2); //Hessian matrix
+  double m = 0.; //momentum
   while (i<i_max && delta > pow(epsilon,2)*delta_0) {
     fillmatrix(H,x);
     vector<double> q = prod(H,r);
@@ -61,9 +59,9 @@ void nonlin_steep(vector<double> (*deriv)(vector<double>), vector<double>& x) {
 }
 
 /* Conjugate gradient method - real residual calculated every 50th step */
-void congrad(boost::numeric::ublas::vector<double>& x, boost::numeric::ublas::matrix<double> A, boost::numeric::ublas::vector<double> b) {
+void congrad(vector<double>& x, vector<double> b, matrix<double> A) {
   using namespace boost::numeric::ublas;
-  double epsilon = 0.00001;
+  double epsilon = 0.000001;
   unsigned int i_max = 10000;
   unsigned int i = 0;
   vector<double> r = b - prod(A,x);
@@ -92,38 +90,13 @@ void congrad(boost::numeric::ublas::vector<double>& x, boost::numeric::ublas::ma
 
 }
 
-/* Following 4 functions define the entries of the Hessian matrix of the Rosenbrock function. The function fillmatrix fills a matrix with the calculated entries of the matrix */
-
-double A00(vector<double> x) {
-  return 800*pow(x[0],2) - 400*pow((x[1]-pow(x[0],2)),2) - 2;
-}
-
-double A01(vector<double> x) {
-  return -400*x[0];
-}
-
-double A10(vector<double> x) {
-  return -400*x[0];
-}
-
-double A11(vector<double> x) {
-  return 200;
-}
-
-
-void fillmatrix(matrix<double>& A, vector<double>x) {
-  A(0,0) = A00(x);
-  A(0,1) = A01(x);
-  A(1,0) = A10(x);
-  A(1,1) = A11(x);
-}
 
 /* Nonlinear conjugate gradient method with Newton-Raphson and Fletcher-Reeves */
 
 void nonlin_congrad(vector<double> (*deriv)(vector<double>), vector<double>& x) {
   unsigned int i = 0;
   unsigned int i_max = 10000;
-  double epsilon = 0.00001;
+  double epsilon = 0.000001;
   unsigned int k = 0;
   vector<double> r = -(*deriv)(x); //residual
   vector<double> d = r; // direction of the search
@@ -132,8 +105,9 @@ void nonlin_congrad(vector<double> (*deriv)(vector<double>), vector<double>& x) 
   matrix<double> H(2,2); //Hessian matrix
   while (i<i_max && delta_new > pow(epsilon,2)*delta_0) {
     unsigned int j = 0;
-    unsigned int j_max = 100;
+    unsigned int j_max = 10;
     double delta_d = inner_prod(d,d);
+    double m = 0.5; //momentum parameter
     double alpha; // find an alpha such that the function along the direction of search gets minimized
 
     do {
@@ -169,10 +143,40 @@ vector<double> deriv_rosenbrock(vector<double> x) {
 }
 
 
+/* Following 4 functions define the entries of the Hessian matrix of the Rosenbrock function. The function fillmatrix fills a matrix with the calculated entries of the matrix */
+
+double A00(vector<double> x) {
+  return 800*pow(x[0],2) - 400*pow((x[1]-pow(x[0],2)),2) - 2;
+}
+
+double A01(vector<double> x) {
+  return -400*x[0];
+}
+
+double A10(vector<double> x) {
+  return -400*x[0];
+}
+
+double A11(vector<double> x) {
+  return 200;
+}
+
+
+void fillmatrix(matrix<double>& A, vector<double>x) {
+  A(0,0) = A00(x);
+  A(0,1) = A01(x);
+  A(1,0) = A10(x);
+  A(1,1) = A11(x);
+}
+
+
 /* Test function, not finished */
 vector<double> deriv_func(vector<double> x) {
   vector<double> result(2);
   result(0) = x[0]*cos( 2*x[0] - exp(x[1]) + 1) * cos(pow(x[0],2)/2 - pow(x[1],2)/4 + 3) - 2*sin(2*x[0] - exp(x[1]) + 1)*sin(pow(x[0],2)/2 - pow(x[1],2)/4 + 3);
   result(1) = exp(x[1]) * sin( 2*x[0] - exp(x[1]) +1  ) * sin( pow(x[0],2)/2 - pow(x[1],2)/4 + 3 ) - 1/2*x[1]*cos( 2*x[0] - exp(x[1]) + 1 ) * cos( pow(x[0],2)/2 - pow(x[1],2)/4 + 3  ) ;
 }
+
+
+
 #endif
