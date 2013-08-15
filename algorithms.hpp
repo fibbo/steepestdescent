@@ -8,7 +8,7 @@
 using namespace boost::numeric::ublas;
 
 void fillmatrix(matrix<double>&, vector<double>);
-void step(vector<double>& x, vector<double> b, matrix<double> A) {
+void steep(vector<double>& x, vector<double> b, matrix<double> A) {
   double epsilon = 0.000001;
   unsigned int i = 0;
   unsigned int i_max = 100;
@@ -28,7 +28,7 @@ void step(vector<double>& x, vector<double> b, matrix<double> A) {
     i += 1;
 
   }
-  std::cout << "Number if iterations i: " << i << std::endl;
+  std::cout << "Number if iterations i for steepest decent: " << i << std::endl;
 }
 
 void step_nonlin(vector<double> (*deriv)(vector<double>), vector<double>& x) {
@@ -52,7 +52,7 @@ void step_nonlin(vector<double> (*deriv)(vector<double>), vector<double>& x) {
     i += 1;
 
   }
-  std::cout << "Number of iterations i: "  << i << std::endl;
+  std::cout << "Number of iterations i for nonlinear steepest descent: "  << i << std::endl;
 
 }
 
@@ -84,7 +84,7 @@ void congrad(boost::numeric::ublas::vector<double>& x, boost::numeric::ublas::ma
     i += 1;
 
   }
-  std::cout << "number of steps: " << i << std::endl;
+  std::cout << "Number of iterations i for conjugate gradient: " << i << std::endl;
 
 }
 
@@ -153,7 +153,7 @@ void nonlin_congrad(vector<double> (*deriv)(vector<double>), vector<double>& x) 
     i += 1;
 
   }
-  std::cout << "Number of iterations i: "  << i << std::endl;
+  std::cout << "Number of iterations i for nonlinear conjugate gradient: "  << i << std::endl;
 }
 
 /* f' of the Rosenbrock function */
