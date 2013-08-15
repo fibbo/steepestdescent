@@ -8,10 +8,11 @@
 using namespace boost::numeric::ublas;
 
 void fillmatrix(matrix<double>&, vector<double>);
-void step(vector<double>& x, vector<double> b, matrix<double> A) {
+
+void steep(vector<double>& x, vector<double> b, matrix<double> A) {
   double epsilon = 0.000001;
   unsigned int i = 0;
-  unsigned int i_max = 100;
+  unsigned int i_max = 10000;
   vector<double> r = b - prod(A,x);
   double delta = inner_prod(r,r);
   double delta_0 = delta;  
@@ -31,11 +32,11 @@ void step(vector<double>& x, vector<double> b, matrix<double> A) {
   std::cout << "Number if iterations i: " << i << std::endl;
 }
 
-void step_nonlin(vector<double> (*deriv)(vector<double>), vector<double>& x) {
+void nonlin_steep(vector<double> (*deriv)(vector<double>), vector<double>& x) {
 
   unsigned int i = 0;
-  unsigned int i_max = 100000;
-  double epsilon = 0.0000001;
+  unsigned int i_max = 10000;
+  double epsilon = 0.00001;
   unsigned int k = 0;
   vector<double> r = -(*deriv)(x); //residual
   vector<double> d = r; // direction of the search
@@ -118,8 +119,8 @@ void fillmatrix(matrix<double>& A, vector<double>x) {
 
 void nonlin_congrad(vector<double> (*deriv)(vector<double>), vector<double>& x) {
   unsigned int i = 0;
-  unsigned int i_max = 100000;
-  double epsilon = 0.0000001;
+  unsigned int i_max = 10000;
+  double epsilon = 0.00001;
   unsigned int k = 0;
   vector<double> r = -(*deriv)(x); //residual
   vector<double> d = r; // direction of the search
@@ -128,7 +129,7 @@ void nonlin_congrad(vector<double> (*deriv)(vector<double>), vector<double>& x) 
   matrix<double> H(2,2); //Hessian matrix
   while (i<i_max && delta_new > pow(epsilon,2)*delta_0) {
     unsigned int j = 0;
-    unsigned int j_max = 1000;
+    unsigned int j_max = 100;
     double delta_d = inner_prod(d,d);
     double alpha; // find an alpha such that the function along the direction of search gets minimized
 
@@ -145,7 +146,7 @@ void nonlin_congrad(vector<double> (*deriv)(vector<double>), vector<double>& x) 
     double beta = delta_new/delta_old;
     d = r + beta*d;
     k += 1;
-    if (k = 5 || inner_prod(r,d) <= 0) {
+    if (k = 10 || inner_prod(r,d) <= 0) {
       d = r;
       k = 0;
     }
