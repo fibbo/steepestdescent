@@ -52,8 +52,18 @@ int main(int argc, char * argv[])
      std::cout << "Enter x2*: " << std::endl;
      std::cin >> x2(0) >> x2(1);
      
+<<<<<<< HEAD
      nonlin_steep(deriv_rosenbrock, x2);
      std::cout << x2 << std::endl;
+=======
+     step_nonlin(deriv_rosenbrock, x);
+     std::cout << x << std::endl;
+
+     std::cout << "Enter x*: " << std::endl;
+     std::cin >> x(0) >> x(1);
+>>>>>>> 63bf66a041f455a98e53f222871bc28fbec66f68
      
+     nonlin_congrad(deriv_rosenbrock, x);
+     std::cout << x << std::endl;
      return 0;
 }
